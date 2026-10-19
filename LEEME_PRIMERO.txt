@@ -1,0 +1,47 @@
+ESKALA 5.0 — RUTA ACADÉMICA, OBSERVACIONES Y TRÁMITES UNIVERSITARIOS
+===============================================================
+
+ESTA VERSIÓN ES PARA TU PÁGINA DE GITHUB PAGES
+Repositorio: https://github.com/eskalacusco-afk/Investigaci-n
+Página: https://eskalacusco-afk.github.io/Investigaci-n/
+
+IMPORTANTE ANTES DE EMPEZAR
+- No elimines ni vuelvas a crear las carpetas de Google Drive.
+- No necesitas volver a ejecutar setupEskala ni modificar tu proyecto Apps Script.
+- Descarga desde ESKALA (Google y respaldo) una copia de seguridad JSON ANTES de actualizar.
+- No incluyas tu ESKALA_ACCESS_KEY en el repositorio, ZIP o capturas.
+- La conexión seguirá usando tu configuración previa y el archivo conexion-google.js.
+
+CÓMO ACTUALIZAR
+1. Descarga y descomprime el ZIP entregado.
+2. Ingresa al repositorio https://github.com/eskalacusco-afk/Investigaci-n
+3. En la rama 'main', elige Add file > Upload files.
+4. Carga únicamente el archivo 'index.html' del paquete y confirma el reemplazo de 'index.html' anterior.
+5. Commit changes. Espera que GitHub Pages publique los cambios.
+6. Entra a https://eskalacusco-afk.github.io/Investigaci-n/ y presiona Ctrl+Shift+R.
+7. Si vuelve a solicitar conexión, introduce en tu navegador la URL /exec y la clave renovada desde Apps Script. No las compartas.
+
+IMPORTANTE: NO SOBRESCRIBIR LOS DATOS
+- Los expedientes y pagos están en Drive/Sheets, no en el archivo HTML.
+- Los campos nuevos se añaden a cada expediente cuando los edites: workflow, reviewRounds, reviewers, turnitinChecks.
+- Los campos de contratos anteriores, cuotas, estudiantes y pagos se conservan.
+- Los nombres antiguos de entregables se mantienen para respetar cambios manuales. Puedes usar el botón
+  'Usar los nombres de tu proceso de trabajo' dentro de una asesoría completa. Solo renombra los títulos
+  originales reconocidos; no altera estados ni importes.
+
+MÓDULOS NUEVOS
+- Elaboración de tesis: 18 etapas agrupadas, con estado, nota actual, historial de notas, meta y documento.
+- Trámites universitarios: resumen de 5 pasos oficiales UAC (cuando el caso es UAC pregrado), y tareas ya existentes.
+- Observaciones y dictaminantes: nombres del asesor, dictaminantes 1, 2, 3, presidente, rondas sucesivas.
+- Registro de correcciones por ronda y texto para explicar las mejoras al jurado.
+- Registro sucesivo de informes Turnitin y porcentajes, con alerta referencial si supera el 25%.
+- Exportar 'Resumen para defensa' como archivo de texto.
+
+NOTAS IMPORTANTES
+- Los procedimientos UAC reflejan la secuencia suministrada por el usuario y pueden variar con el reglamento.
+- El umbral Turnitin de 25% es REFERENCIAL, no se aplica universalmente a todos los programas.
+- Los días hábiles y plazos deben confirmarse con el programa y fecha del acto institucional.
+- Esta app sigue sin emitir correos automáticos; las metas con fecha se muestran en el panel.
+- Las pruebas realizadas cubrieron sintaxis y operaciones de datos simulados en JavaScript; aún falta
+  comprobar la versión publicada conectada a Apps Script con datos de prueba antes de usar datos sensibles.
+- Si no quieres hacer cambios todavía, abre VISTA_PREVIA_LOCAL.html del enlace separado. Esa prueba no guarda en Google.
