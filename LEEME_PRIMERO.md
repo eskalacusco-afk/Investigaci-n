@@ -1,84 +1,71 @@
-# ESKALA v4 — Identidad visual oficial + Control de tesis y servicios
+# ESKALA — GitHub Pages + Google Apps Script + Google Drive / Sheets
 
-Esta versión utiliza el logotipo proporcionado por el propietario, con azul marino `#042555`, turquesa `#00C8C2` y blanco. Incorpora una navegación renovada, portada de control de tesis y tarjetas de seguimiento mejoradas. **La lógica de gestión de la v3 se conserva**, incluidos servicios independientes, contratos, cuotas, entregables y rutas por universidad.
+Esta **es la arquitectura solicitada**: la página visible vive en GitHub Pages; Apps Script solo sirve como puente de ejecución; los datos privados permanecen en tu cuenta Google (Drive como almacenamiento por expediente y Sheets como índices consultables).
 
-## Archivos para Apps Script
+**Contenido del ZIP**
 
-- `Code.gs`: servidor que guarda expedientes JSON privados en Drive y genera índices en Google Sheets.
-- `Index.html`: estructura web con logotipo e isotipo incrustados (no necesitan alojamiento externo).
-- `Styles.html`: estilos y paleta corporativa.
-- `Client.html`: lógica de interfaz, edición de expedientes y pagos.
-- `VISTA_PREVIA_LOCAL.html`: versión de prueba en tu navegador SIN conexión a Google; usa datos de prueba locales de ese navegador.
-- `ESKALA_logo_horiz.png` y `ESKALA_simbolo.png`: copias recortadas del logo original.
+```
+github-pages/
+  index.html            página completa ESKALA con marca corporativa
+  conexion-google.js    conexión del navegador con Apps Script
+apps-script/
+  Code.gs               backend Drive / Sheets, controlado por clave privada
+  Puente.html           puente de mensajería entre GitHub y Apps Script
+```
 
-## Activación desde cero
+## A. Publicar la página en GitHub
 
-1. Ve a https://script.google.com/ e inicia sesión en tu cuenta Google personal.
-2. Crea un proyecto llamado `ESKALA - Gestión de Tesis y Servicios`.
-3. Sustituye `Code.gs` con el contenido del paquete. Crea tres archivos **HTML** llamados exactamente `Index`, `Styles`, `Client` e introduce el contenido correspondiente.
-4. Guarda y ejecuta la función `setupEskala` desde el editor. Autoriza Google Drive y Google Sheets desde tu cuenta. No compartas contraseñas.
-5. Selecciona **Implementar > Nueva implementación > Aplicación web**; ejecuta como **Yo** y restringe el acceso a **Solo yo** (si tu cuenta/interfaz admite esa opción). Nunca publiques con acceso libre a cualquiera.
-6. Abre la URL de la aplicación web desplegada e ingresa tu primer trabajo.
+1. Descomprime el ZIP en tu PC.
+2. Entra al **repositorio de GitHub que usas para ESKALA**.
+3. Sube **los dos archivos dentro de `github-pages`** directamente a la raíz del repositorio (`index.html` y `conexion-google.js`). **No subas la carpeta `github-pages` como carpeta contenedora ni el ZIP sin extraer.**
+4. Haz **Commit changes**.
+5. En **Settings > Pages**, selecciona **Deploy from a branch > main > /(root)**. Espera a que termine el despliegue.
+6. Tu enlace normalmente será `https://TU_USUARIO.github.io/TU_REPOSITORIO/` (o `https://TU_USUARIO.github.io/` si ese es el nombre del repositorio).
+7. Anota **solo el origen del sitio, sin ruta**. Ejemplo: si tu página es `https://maria.github.io/eskala/`, el origen es `https://maria.github.io`.
 
-## Actualización desde la versión 3
+## B. Configurar almacenamiento en Google Apps Script
 
-- Conserva el proyecto de Apps Script y **no borres los archivos de Drive ni la hoja de Google Sheets**.
-- Sustituye solamente `Index.html`, `Styles.html` y `Client.html` si ya estabas utilizando el `Code.gs` de v3 (el backend de esta entrega mantiene el mismo formato).
-- Guarda y **vuelve a implementar una nueva versión** para aplicar los cambios en la URL de producción.
-- Las claves de almacenamiento local de v3 se mantienen para conservar los expedientes de prueba en el mismo navegador. La base real sigue en tu Drive.
+1. Entra en <https://script.google.com/> desde tu cuenta Google.
+2. Crea un proyecto llamado `ESKALA - Datos` (o abre el proyecto anterior **si quieres conservar sus expedientes**).
+3. En el archivo de código `Código.gs`, pega **todo** el contenido de `apps-script/Code.gs`. El nombre `Código.gs` o `Code.gs` es indiferente.
+4. Con **+ > HTML**, crea un archivo **Puente** y pega el contenido de `apps-script/Puente.html`. **No debes pegar el HTML en Código.gs.**
+5. Guarda.
+6. Arriba, selecciona la función `setupEskala` y pulsa **Ejecutar**. Autoriza Drive y Sheets. Esto prepara las carpetas, índices y una clave privada de conexión. Si ya había un proyecto configurado, la función conserva los mismos IDs de Drive/Sheets y agrega las pestañas necesarias, sin borrar expedientes.
+7. Abre **Configuración del proyecto > Propiedades de secuencia de comandos (Script properties)**:
+    - Confirma que exista `ESKALA_ACCESS_KEY`. **Copia su VALOR para introducirlo después únicamente en la página ESKALA.** **NO lo copies en GitHub, capturas, chats o repositorios**. Tiene más de 100 caracteres aleatorios.
+    - Agrega `ESKALA_ALLOWED_ORIGIN` con el origen de tu GitHub (por ejemplo: `https://maria.github.io`). Es importante escribir exactamente el dominio HTTPS **sin barra final ni el nombre del repositorio**.
+8. Presiona **Implementar > Nueva implementación > Aplicación web**.
+9. Escoge **Ejecutar como: Yo** y **Quién tiene acceso: Cualquier usuario (Anyone)**. La página puente se puede cargar desde GitHub, pero toda operación de lectura/escritura verifica la clave privada del servidor. Este punto es necesario para el puente embebido con la solución suministrada. No uses este despliegue para otros proyectos.
+10. Pulsa **Implementar**, autoriza lo necesario y copia la URL de la aplicación web que termina en `/exec`. Usa **esa URL**, no la dirección del editor ni una `/dev`.
 
-## Reglas del negocio preservadas
+## C. Conectar ESKALA
 
-- Un expediente puede tener varios servicios contratados, con importes, plazos, cuotas y pagos separados.
-- La asesoría completa puede incluir estadística, diapositivas y preparación para sustentación como entregables de un solo contrato, sin cobrar dos veces.
-- Los servicios puntuales no requieren la ruta universitaria de tesis completa.
-- La ruta UAC pregrado conserva los nombres de sus 5 pasos. Para maestrías y otras universidades se utiliza una plantilla editable.
-- No se mandan correos ni alertas fuera del sistema. El panel muestra solo metas/reuniones pactadas y otros plazos configurados.
+1. Abre la página publicada en GitHub.
+2. Verás una ventana **ESKALA — Conecta con Google**.
+3. Introduce la URL de Apps Script que acaba en `/exec`.
+4. Introduce la clave privada **ESKALA_ACCESS_KEY** que copiaste de Script Properties.
+5. Presiona **Conectar con Google**. Si funciona, aparecerá el panel y `Conectado a Google`.
+6. Crea un expediente **de prueba**, agrega un servicio, un abono y una meta. Espera a ver `Guardado en Google ✓`, cierra y reabre la página para verificar la persistencia.
+7. Luego elimina el expediente ficticio y comienza con tus datos reales.
 
-## Advertencias de implementación
+La URL se recuerda en el navegador; la clave solo se conserva en `sessionStorage` (pestaña/sesión actual). Tendrás que volver a introducirla cuando abras una nueva sesión. Eso evita incrustarla en la página pública.
 
-- La **vista previa local** no está conectada a Google; la sincronización privada debe probarse después de desplegar la app con permisos en tu propia cuenta.
-- Los nombres, procedimientos y tasas universitarios deben verificarse con los reglamentos aplicables y pueden variar por universidad/programa.
-- Los datos personales de tesistas son privados. No publiques tu hoja Sheets ni los archivos JSON de Drive ni compartas permisos de edición del proyecto de Apps Script.
-- ESKALA v4 es una aplicación web de uso personal basada en Apps Script. Google impone cuotas de servicio y límites de ejecución.
+## D. Seguridad y privacidad
 
-## Cambios principales
-- **Tesis y servicio contratado son entidades distintas.** Un mismo expediente puede tener asesoría completa, estadística, diapositivas, preparación para sustentación u otros contratos separados.
-- **Asesoría completa** incluye por defecto el análisis estadístico, las diapositivas y la preparación para sustentación como entregables. No se factura dos veces el mismo entregable.
-- Cada contrato tiene precio TOTAL, estado, notas, entregables, pagos recibidos y cuotas propias.
-- Meta pactada = fecha escrita en el contrato, entregable o compromiso. Sin correos, recordatorios automáticos ni notificaciones externas.
-- Los expedientes previos con acuerdos por tesista se conservan como **contratos anteriores**. No registres sus honorarios otra vez en un servicio.
-- Las 5 etapas oficiales UAC pregrado siguen intactas, y las otras universidades siguen con plantilla genérica editable.
-- Sheets agrega las pestañas **Servicios** y **Entregables**. Drive sigue guardando un JSON privado por expediente.
+- El HTML y JS de GitHub Pages son públicos. **No subas contratos, documentos, expedientes, cifras individuales, claves, hojas ni contraseñas a GitHub**.
+- Google Apps Script se ejecuta como propietario: todos sus permisos son los de tu cuenta. El backend incluye un **único método público autorizado con clave** para leer/escribir; los métodos de datos con sufijo `_` no se pueden invocar directamente desde `google.script.run`.
+- La clave aleatoria de `ESKALA_ACCESS_KEY` debe permanecer secreta y no almacenarse de modo público. Si crees que fue expuesta, cámbiala desde Script Properties: las conexiones anteriores dejarán de funcionar.
+- `ESKALA_ALLOWED_ORIGIN` restringe el intercambio de mensajes al dominio configurado. La aplicación añade además un identificador aleatorio de sesión a los mensajes.
+- Este acceso mediante clave es una solución práctica para un **solo administrador** en un sitio GitHub público, pero **no reemplaza** la autenticación Google OAuth o una capa de backend de identidad empresarial. Antes de usarlo con información muy sensible, conviene hacer una revisión de seguridad adicional.
+- No hay correos ni mensajes programados. Las metas y reuniones se muestran dentro de la página.
 
-## Instalación nueva
-1. Ingresa a https://script.google.com/ y crea el proyecto `ESKALA - Control de Tesis`.
-2. Pega el archivo `Code.gs` en el editor y crea tres archivos HTML con nombres exactos `Index`, `Styles`, `Client` pegando sus respectivos contenidos. `Styles.html` contiene CSS sin `<style>`, mientras que `Client.html` incluye `<script>`.
-3. Guarda y ejecuta `setupEskala`. Da permisos a Drive y Sheets en tu propia cuenta.
-4. **Implementar > Nueva implementación > Aplicación web**: ejecutar como **Yo**, acceso **Solo yo**. Nunca elegir «cualquier persona».
-5. Registra trabajos y consulta en Drive la carpeta `ESKALA - Control de Tesis`.
+## E. Si aparece un error
 
-## Actualizar una instalación v2
-1. Exporta un respaldo JSON de la aplicación anterior.
-2. Sustituye los contenidos de los cuatro archivos del mismo proyecto Apps Script (NO crees otra carpeta de datos).
-3. Guarda y ejecuta `setupEskala` nuevamente. Detecta instalación previa y añade las columnas y pestañas nuevas **sin borrar datos**.
-4. Ejecuta `rebuildIndexes` para regenerar todos los índices desde los JSON de Drive.
-5. Desde **Implementar > Gestionar implementaciones**, edita la implementación existente y publica la versión de código actualizada.
-6. Confirma que aparece «Servicios contratados» y prueba creando un contrato pequeño sin datos sensibles, registrando un entregable y un abono. Verifica el guardado en Drive y el índice Sheets.
+- **GitHub 404:** comprueba que `index.html` está en la raíz; rama `main`, carpeta `/(root)`, enlace y mayúsculas correctos.
+- **Se queda en “Conectando”:** revisa que hayas publicado **aplicación web**, acceso **Cualquier usuario**, URL `/exec` y `ESKALA_ALLOWED_ORIGIN` configurado (origen exacto). Algunos bloqueos de contenido o de marcos de terceros del navegador pueden impedir el puente. Prueba en Chrome, sin extensiones de bloqueo, o revisa la consola.
+- **Clave incorrecta:** asegúrate de pegar `ESKALA_ACCESS_KEY` completo desde Script Properties; no es el ID de implementación.
+- **Permisos:** ejecuta `setupEskala` y acepta los permisos de Google desde el editor.
+- **Hiciste cambios en Code.gs:** ve a **Implementar > Gestionar implementaciones > Editar > Nueva versión > Implementar**. Un simple Guardar no cambia la versión `/exec` publicada.
+- **Se muestran datos de prueba local:** verifica que hayas reemplazado el `index.html` anterior y subido también `conexion-google.js`.
 
-## Uso recomendado
-1. **Nuevo trabajo** > título provisional o nombre identificador del encargo + universidad + tesista.
-2. Escoge **primer servicio**: por ejemplo *Análisis estadístico*; ingresa monto total acordado (no por tesista).
-3. Entra en el expediente > **Servicios y entregables**; cambia alcance, fechas pactadas y estados, agrega cuotas y abonos.
-4. Puedes agregar otro contrato si la persona te contrata un trabajo adicional genuinamente independiente.
-5. Cuando aplique a pregrado UAC, la pestaña **Ruta y tareas** continúa controlando los trámites, por separado.
-
-## Finanzas y límites
-- En **Servicios**, los importes son por contrato. Si un contrato beneficia a dos tesistas, no se multiplica automáticamente por dos.
-- En **Tesistas y pagos anteriores**, los importes heredados se mantienen, pero evita registrarlos otra vez en Servicios.
-- Las tasas académicas de universidades, por ejemplo S/ 1,850 para solicitar sustentación en UAC según lo indicado, no se suman a tus ingresos.
-- Las cuotas se imputan por orden cronológico; no existe todavía asignación manual de un cobro a una cuota concreta.
-- El archivo `VISTA_PREVIA_LOCAL.html` solo guarda datos de prueba en este navegador; **NO** conecta Google.
-- Se ha comprobado sintaxis y lógica local; **no se ha probado todavía una ejecución real dentro de tu cuenta Google**.
-- JSON en Drive es la fuente de verdad; Sheets es un índice regenerable. No edites índices manualmente.
-- Evita guardar bases de datos personales sensibles innecesarias y no compartas carpetas o respaldos públicamente.
+**Nota de verificación**: se comprobó la sintaxis del JavaScript y del código Apps Script, pero la conexión real depende de tu despliegue y autorizaciones. Haz la prueba con un expediente ficticio antes de registrar información de tesistas.
